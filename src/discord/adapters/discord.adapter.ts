@@ -24,7 +24,10 @@ export class DiscordWsAdapter extends WsAdapter {
     transform: (data: any) => Observable<any>,
   ) {
     const handlersMap = new Map<string, MessageMappingProperties>();
-    handlers.forEach((handler) => handlersMap.set(handler.message, handler));
+    // 데코레이터에서 문자열이나 숫자로 들어온 값을 전부 문자열로 통일하여 매핑합니다.
+    handlers.forEach((handler) =>
+      handlersMap.set(String(handler.message), handler),
+    );
 
     fromEvent(client, 'message')
       .pipe(
@@ -43,13 +46,18 @@ export class DiscordWsAdapter extends WsAdapter {
   ): Observable<any> {
     try {
       const message = JSON.parse(buffer.data);
-      // 핸들러를 opcode 기준으로 찾기
-      const opKey = message.op?.toString();
+      // 핸들러를 통일된 opcode(문자열) 기준으로 찾습니다.
+      const opKey = String(message.op);
       const messageHandler = handlersMap.get(opKey);
 
       if (!messageHandler) {
         return EMPTY;
       }
+
+      // 변환된 데이터를 처리하도록 NestJS 파이프라인에 콜백을 전달합니다. (여기서는 커스텀 매개변수를 쓰기 위해)
+      // 원래 NestJS WebSocket 데코레이터는 MessageBody와 ConnectedSocket을 사용하므로,
+      // 데이터뿐만 아니라 client 객체를 함께 넘길 수 있도록 수정하는 것이 일반적이지만,
+      // 현재 WsAdapter 구조를 최대한 유지하면서 페이로드 객체 자체를 리턴합니다.
       return transform(messageHandler.callback(message.d));
     } catch {
       return EMPTY;
