@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { DiscordWsAdapter } from './discord/discord.adapter';
+import { DiscordWsAdapter } from './discord/adapters/discord.adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

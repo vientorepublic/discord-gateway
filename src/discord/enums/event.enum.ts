@@ -1,0 +1,9 @@
+export enum GatewayEvent {
+  READY = 'READY',
+  RESUMED = 'RESUMED',
+  MESSAGE_CREATE = 'MESSAGE_CREATE',
+  MESSAGE_UPDATE = 'MESSAGE_UPDATE',
+  MESSAGE_DELETE = 'MESSAGE_DELETE',
+  GUILD_CREATE = 'GUILD_CREATE',
+  // 그 외 디스코드 게이트웨이 이벤트들...
+}
