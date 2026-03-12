@@ -1,6 +1,6 @@
 # Discord Gateway Mock Server
 
-이 프로젝트는 [Discord의 Developer 웹소켓 게이트웨이 프로토콜](https://discord.com/developers/docs/topics/gateway) 레퍼런스를 분석하고 이를 웹소켓 환경에서 모방/구현해보는 NestJS 기반의 프로젝트입니다.
+이 프로젝트는 [Discord의 Developer 웹소켓 게이트웨이 프로토콜](https://docs.discord.com/developers/events/gateway) 레퍼런스를 분석하고 이를 웹소켓 환경에서 모방/구현해보는 NestJS 기반의 프로젝트입니다.
 
 ## 1. 프로토콜 분석 및 모방
 
