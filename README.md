@@ -5,6 +5,7 @@
 ## 1. 프로토콜 분석 및 모방
 
 Discord는 클라이언트(봇/사용자)와 실시간 이벤트를 주고받기 위해 독자적인 형태의 웹소켓 기반 게이트웨이 프로토콜을 사용합니다.
+
 본 프로젝트에서는 이러한 Discord의 통신 규격을 NestJS를 통해 자체적으로 구현하며, 크게 아래의 핵심 기능들의 모방을 목표로 합니다.
 
 - **Opcode (Operation Codes) 기반 통신:** 단순 문자열 이벤트명이 아닌 `op`, `d`, `s`, `t` 네 가지 주요 프로퍼티로 이루어진 JSON 페이로드를 사용합니다.
@@ -14,7 +15,8 @@ Discord는 클라이언트(봇/사용자)와 실시간 이벤트를 주고받기
 ## 2. NestJS 웹소켓 게이트웨이 구현
 
 NestJS의 웹소켓 라이브러리(`@nestjs/websockets`, `@nestjs/platform-ws`)를 기반으로 구현되었습니다.
-Discord의 프로토콜은 기본적으로 `{ "event": "", "data": "" }` 형식이 아니기 때문에, 이 프로젝트에서는 **Custom WsAdapter (`DiscordWsAdapter`)**를 구현하여 Discord의 형식(`{ "op": X, "d": ... }`)을 NestJS의 `@SubscribeMessage(Opcode)` 데코레이터에서 인식할 수 있도록 변환합니다.
+
+Discord의 프로토콜은 기본적으로 `{ "event": "", "data": "" }` 형식이 아니기 때문에, 이 프로젝트에서는 Custom WsAdapter (`DiscordWsAdapter`)를 구현하여 Discord의 형식(`{ "op": X, "d": ... }`)을 NestJS의 `@SubscribeMessage(Opcode)` 데코레이터에서 인식할 수 있도록 변환합니다.
 
 구현 핵심 파일:
 
@@ -45,3 +47,7 @@ npm run start:dev
 ```bash
 node test-client.js
 ```
+
+## 4. 라이선스
+
+MIT
