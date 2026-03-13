@@ -1,0 +1,33 @@
+export enum GatewayCloseCode {
+  UnknownError = 4000,
+  UnknownOpcode = 4001,
+  DecodeError = 4002,
+  NotAuthenticated = 4003,
+  AuthenticationFailed = 4004,
+  AlreadyAuthenticated = 4005,
+  InvalidSeq = 4007,
+  RateLimited = 4008,
+  SessionTimedOut = 4009,
+  InvalidShard = 4010,
+  ShardingRequired = 4011,
+  InvalidApiVersion = 4012,
+  InvalidIntents = 4013,
+  DisallowedIntents = 4014,
+}
+
+export const GatewayCloseMessage: Record<GatewayCloseCode, string> = {
+  [GatewayCloseCode.UnknownError]: 'Unknown error',
+  [GatewayCloseCode.UnknownOpcode]: 'Unknown opcode',
+  [GatewayCloseCode.DecodeError]: 'Decode error',
+  [GatewayCloseCode.NotAuthenticated]: 'Not authenticated',
+  [GatewayCloseCode.AuthenticationFailed]: 'Authentication failed',
+  [GatewayCloseCode.AlreadyAuthenticated]: 'Already authenticated',
+  [GatewayCloseCode.InvalidSeq]: 'Invalid seq',
+  [GatewayCloseCode.RateLimited]: 'Rate limited',
+  [GatewayCloseCode.SessionTimedOut]: 'Session timed out',
+  [GatewayCloseCode.InvalidShard]: 'Invalid shard',
+  [GatewayCloseCode.ShardingRequired]: 'Sharding required',
+  [GatewayCloseCode.InvalidApiVersion]: 'Invalid API version',
+  [GatewayCloseCode.InvalidIntents]: 'Invalid intent(s)',
+  [GatewayCloseCode.DisallowedIntents]: 'Disallowed intent(s)',
+};

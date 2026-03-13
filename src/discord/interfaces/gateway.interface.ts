@@ -7,8 +7,15 @@ export interface GatewayPayload<T = any> {
   t?: string | null; // 이벤트 이름 (이벤트 Dispatch 전용)
 }
 
+export interface SessionState {
+  sessionId: string;
+  token: string;
+  userId: string;
+  sequenceNum: number;
+  eventBuffer: GatewayPayload[];
+}
+
 export interface ClientState {
   authenticated: boolean;
   sessionId?: string;
-  userId?: string;
 }

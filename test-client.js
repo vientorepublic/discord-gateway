@@ -93,24 +93,45 @@ class MockDiscordClient {
     this.log(
       this.colors.cyan,
       'Protocol',
-      `Hello received. Starting heartbeat every ${heartbeatInterval}ms (mocked to 5000ms for testing)`,
+      `Hello received. Starting heartbeat every ${heartbeatInterval}ms`,
     );
 
-    // 실제로는 server가 준 heartbeat_interval을 써야하지만 테스트를 위해 5초로 고정
-    this.startHeartbeat(5000);
-    this.sendIdentify();
+    this.startHeartbeat(heartbeatInterval);
+
+    // 만약 기존 세션 ID가 존재한다면 Identify 대신 Resume (Opcode 6)를 시도
+    if (this.sessionId) {
+      this.log(
+        this.colors.cyan,
+        'Protocol',
+        `Attempting to resume session: ${this.sessionId}`,
+      );
+      this.sendPayload(6, {
+        token: this.token,
+        session_id: this.sessionId,
+        seq: this.sequenceNum || 0,
+      });
+    } else {
+      this.sendIdentify();
+    }
   }
 
   handleDispatch(payload) {
     if (payload.t === 'READY') {
+      this.sessionId = payload.d.session_id; // 저장해 둔 세션 ID (Resume에 사용)
       this.log(
         this.colors.green,
         'Ready',
-        `Bot is fully authenticated and ready! User: ${payload.d.user.username}`,
+        `Bot is fully authenticated! Session: ${this.sessionId}`,
       );
 
       // Ready 이후 다른 테스트용 행동 실행
       this.simulateClientActions();
+    } else if (payload.t === 'RESUMED') {
+      this.log(
+        this.colors.green,
+        'Resumed',
+        `Session successfully resumed! Replayed events received.`,
+      );
     } else if (payload.t === 'MESSAGE_CREATE') {
       this.log(
         this.colors.green,
@@ -177,9 +198,21 @@ class MockDiscordClient {
       });
     }, 2000);
 
-    // 2. 4초 후 임의의 이벤트(예: 메시지 작성 시도)
-    // 참고: 원래 Discord Gateway 클라이언트는 메시지를 직접 전송하지 않고 HTTP API를 쓰지만,
-    // 여기서는 양방향 소켓 테스트 목적으로 클라이언트가 직접 이벤트를 보내는 것을 가정할 수도 있습니다.
+    // 2. 5초 후 연결을 끊고 Resume 테스트 (Resume - Opcode 6)
+    setTimeout(() => {
+      this.log(
+        this.colors.red,
+        'Test',
+        'Simulating disconnect for Resume testing...',
+      );
+      this.ws.close();
+
+      // 1초 뒤 재연결 시도
+      setTimeout(() => {
+        this.log(this.colors.cyan, 'Test', 'Reconnecting...');
+        this.connect();
+      }, 1000);
+    }, 5000);
   }
 }
 

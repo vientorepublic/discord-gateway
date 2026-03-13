@@ -11,6 +11,7 @@ import { Server, WebSocket } from 'ws';
 import { GatewayOpcode } from '../enums/opcode.enum';
 import { DiscordClientService } from '../services/discord-client.service';
 import { IdentifyDto } from '../dtos/identify.dto';
+import { ResumeDto } from '../dtos/resume.dto';
 
 @WebSocketGateway({ path: '/api/gateway' })
 export class DiscordGateway
@@ -43,5 +44,23 @@ export class DiscordGateway
     @ConnectedSocket() client: WebSocket,
   ) {
     this.discordClientService.authenticateClient(client, data);
+  }
+
+  // 4. 상태 업데이트 처리 (Opcode 3 Presence Update)
+  @SubscribeMessage(GatewayOpcode.PresenceUpdate)
+  handlePresenceUpdate(
+    @MessageBody() data: any,
+    @ConnectedSocket() client: WebSocket,
+  ) {
+    this.discordClientService.handlePresenceUpdate(client, data);
+  }
+
+  // 5. 연결 재개 처리 (Opcode 6 Resume)
+  @SubscribeMessage(GatewayOpcode.Resume)
+  handleResume(
+    @MessageBody() data: ResumeDto,
+    @ConnectedSocket() client: WebSocket,
+  ) {
+    this.discordClientService.resumeSession(client, data);
   }
 }
