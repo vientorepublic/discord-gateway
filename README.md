@@ -1,6 +1,6 @@
 # Discord Gateway Mock Server
 
-이 프로젝트는 [Discord의 Developer 웹소켓 게이트웨이 프로토콜](https://docs.discord.com/developers/events/gateway) 레퍼런스를 분석하고 이를 웹소켓 환경에서 모방/구현해보는 NestJS 기반의 프로젝트입니다.
+이 프로젝트는 [Discord의 웹소켓 게이트웨이 프로토콜](https://docs.discord.com/developers/events/gateway) 레퍼런스를 분석하고 이를 웹소켓 환경에서 모방/구현해보는 NestJS 기반의 프로젝트입니다.
 
 ## 1. 프로토콜 분석 및 모방
 
@@ -11,6 +11,9 @@ Discord는 클라이언트(봇/사용자)와 실시간 이벤트를 주고받기
 - **Opcode (Operation Codes) 기반 통신:** 단순 문자열 이벤트명이 아닌 `op`, `d`, `s`, `t` 네 가지 주요 프로퍼티로 이루어진 JSON 페이로드를 사용합니다.
 - **Hello (Opcode 10) & Heartbeat (Opcode 1) 메커니즘:** 서버 연결 시 서버가 `Hello`와 `heartbeat_interval`을 보내고, 클라이언트는 주기적으로 생존 신고(Heartbeat)를 해야 합니다.
 - **Identity (Opcode 2) & Ready (Opcode 0):** 연결 초기화 이후 클라이언트 측에서 인증(`Identify`)을 보내면, 서버 측에서 연결 완료(`READY`) 이벤트를 반환합니다.
+- **Resume (Opcode 6) & Replay 시스템:** 네트워크 단절 등의 사유로 커넥션이 일시적으로 끊어졌을 때 클라이언트가 기존 세션 ID(`session_id`)와 시퀀스 번호(`s`)를 기반으로 재연결(`Resume`)을 시도하고, 서버 측에서 이벤트 버퍼를 확인하여 클라이언트가 누락한 이벤트를 재전송(Replay)하는 메커니즘을 지원합니다.
+- **Presence Update (Opcode 3):** 클라이언트의 활동 상태 변경 이벤트를 핸들링할 수 있습니다.
+- **Gateway 예외 처리 및 Close Codes:** 비정상 페이로드 진입 시 Discord의 공식 에러 코드(예: `4002 Decode error`, `4009 Session timed out` 등) 객체를 참조하여 명시적으로 소켓 연결을 종료하는 방어 로직이 구현되어 있습니다.
 
 ## 2. NestJS 웹소켓 게이트웨이 구현
 
